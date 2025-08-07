@@ -12,7 +12,6 @@
             font-family: 'Inter', sans-serif;
         }
     </style>
-    <link rel="manifest" href="manifest.json">
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm">
@@ -81,10 +80,10 @@
             &copy; 2024 Todos los derechos reservados.
         </p>
         <div class="flex justify-center space-x-4">
-            <a href="https://www.instagram.com/itz.lihu/" target="_blank" class="hover:text-blue-600 transition-colors">Instagram</a>
-            <a href="https://github.com/LihueCasella" target="_blank" class="hover:text-blue-600 transition-colors">GitHub</a>
-            <a href="https://wa.me/+5492657319151" target="_blank" class="hover:text-blue-600 transition-colors">WhatsApp</a>
-            <a href="https://www.linkedin.com/in/lihuecasella" target="_blank" class="hover:text-blue-600 transition-colors">LinkedIn</a>
+            <a href="https://www.instagram.com/tu-usuario" target="_blank" class="hover:text-blue-600 transition-colors">Instagram</a>
+            <a href="https://github.com/tu-usuario" target="_blank" class="hover:text-blue-600 transition-colors">GitHub</a>
+            <a href="https://wa.me/tu-numero-de-telefono" target="_blank" class="hover:text-blue-600 transition-colors">WhatsApp</a>
+            <a href="https://www.linkedin.com/in/tu-usuario" target="_blank" class="hover:text-blue-600 transition-colors">LinkedIn</a>
         </div>
     </footer>
 
@@ -112,7 +111,7 @@
                 const buRealizados = parseFloat(buRealizadosInput.value) || 0;
                 const cocinador = parseFloat(cocinadorInput.value);
                 
-                // --- Nueva validación para el campo Cocinador ---
+                // --- Validación para el campo Cocinador ---
                 if (cocinador !== 0 && cocinador !== 1) {
                     // Si el valor no es 0 ni 1, mostramos un error y detenemos el cálculo
                     cocinadorErrorP.classList.remove('hidden');
@@ -140,6 +139,7 @@
                         let preparaciones = horas / horasPorPreparacion;
                         
                         // Lógica condicional para el cocinador
+                        // Aquí se aplica la lógica correcta para restar o sumar 1 según el valor del cocinador
                         if (cocinador === 1) {
                             preparaciones -= 1; // Si es 1, resta 1 a las preparaciones
                         } else if (cocinador === 0) {
