@@ -13,7 +13,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+<body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
             Calculadora de Relleno
@@ -69,48 +69,94 @@
                     <span class="font-medium">Preparaciones faltantes:</span>
                     <span id="preparaciones_faltantes" class="text-lg font-bold text-blue-600">0.00</span>
                 </div>
+                <!-- Nuevo elemento para mostrar el estado del cocinador -->
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">Estado del cocinador:</span>
+                    <span id="cocinador_status" class="text-lg font-bold text-gray-600">No usado</span>
+                </div>
             </div>
         </div>
     </div>
+    
+    <!-- Pie de página con derechos de autor y redes sociales -->
+    <footer class="mt-8 text-center text-gray-500 text-sm">
+        <p class="mb-2">
+            &copy; 2025 Todos los derechos reservados a Lihue Casella
+        </p>
+        <div class="flex justify-center space-x-4">
+            <a href="https://www.instagram.com/itz.lihu/" target="_blank" class="hover:text-blue-600 transition-colors">Instagram</a>
+            <a href="https://github.com/LihueCasella" target="_blank" class="hover:text-blue-600 transition-colors">GitHub</a>
+            <a href="https://wa.me/+5492657319151" target="_blank" class="hover:text-blue-600 transition-colors">WhatsApp</a>
+            <a href="https://www.linkedin.com/in/lihuecasella/" target="_blank" class="hover:text-blue-600 transition-colors">LinkedIn</a>
+        </div>
+    </footer>
 
     <script>
         // Lógica de JavaScript para la calculadora
         document.addEventListener('DOMContentLoaded', () => {
             // Constantes y valores de tu hoja de cálculo
-            const rellenoKgPorHr = 263.34;
+            const rellenoKgPorHrBase = 263.34;
             const buPorHr = 1672;
             const horasPorPreparacion = 2.445; // Valor inferido: 6.89 / 2.81
 
             // Referencias a los elementos del DOM (inputs y displays)
             const buPorOrdenInput = document.getElementById('bu_por_orden');
             const buRealizadosInput = document.getElementById('bu_realizados');
+            const cocinadorInput = document.getElementById('cocinador');
             const calcularBtn = document.getElementById('btn_calcular');
             const rellenoFaltanteSpan = document.getElementById('relleno_faltante');
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
             const preparacionesFaltantesSpan = document.getElementById('preparaciones_faltantes');
+            const cocinadorStatusSpan = document.getElementById('cocinador_status');
 
             // Función para realizar el cálculo
             const calcular = () => {
                 const buPorOrden = parseFloat(buPorOrdenInput.value) || 0;
                 const buRealizados = parseFloat(buRealizadosInput.value) || 0;
+                const cocinador = parseFloat(cocinadorInput.value) || 0;
                 
                 const buFaltantes = buPorOrden - buRealizados;
+                
+                // Usamos la tasa de relleno base, ya que el condicional afecta a las preparaciones
+                const rellenoKgPorHrActual = rellenoKgPorHrBase;
 
-                if (buFaltantes > 0 && buPorHr > 0 && rellenoKgPorHr > 0) {
-                    const relleno = buFaltantes * (rellenoKgPorHr / buPorHr);
+                if (buFaltantes > 0 && buPorHr > 0 && rellenoKgPorHrActual > 0) {
+                    const relleno = buFaltantes * (rellenoKgPorHrActual / buPorHr);
                     rellenoFaltanteSpan.textContent = `${relleno.toFixed(2)} Kg`;
 
-                    const horas = relleno / rellenoKgPorHr;
+                    const horas = relleno / rellenoKgPorHrActual;
                     horasFaltantesSpan.textContent = horas.toFixed(2);
 
                     if (horasPorPreparacion > 0) {
-                        const preparaciones = horas / horasPorPreparacion;
+                        let preparaciones = horas / horasPorPreparacion;
+                        
+                        // --- Lógica condicional actualizada para el cocinador ---
+                        if (cocinador === 1) {
+                            preparaciones -= 1; // Si es 1, resta 1 a las preparaciones
+                            cocinadorStatusSpan.textContent = 'Usado (resta 1)';
+                            cocinadorStatusSpan.classList.remove('text-gray-600');
+                            cocinadorStatusSpan.classList.add('text-red-600');
+                        } else if (cocinador === 0) {
+                            preparaciones += 1; // Si es 0, suma 1 a las preparaciones
+                            cocinadorStatusSpan.textContent = 'No usado (suma 1)';
+                            cocinadorStatusSpan.classList.remove('text-red-600');
+                            cocinadorStatusSpan.classList.add('text-green-600');
+                        } else {
+                             // Si el valor no es 0 ni 1
+                            cocinadorStatusSpan.textContent = 'Valor de cocinador inválido (debe ser 0 o 1)';
+                            cocinadorStatusSpan.classList.remove('text-green-600', 'text-red-600');
+                            cocinadorStatusSpan.classList.add('text-gray-600');
+                        }
+                        
                         preparacionesFaltantesSpan.textContent = preparaciones.toFixed(2);
                     }
                 } else {
                     rellenoFaltanteSpan.textContent = '0.00 Kg';
                     horasFaltantesSpan.textContent = '0.00';
                     preparacionesFaltantesSpan.textContent = '0.00';
+                    cocinadorStatusSpan.textContent = 'No usado';
+                    cocinadorStatusSpan.classList.remove('text-red-600', 'text-green-600');
+                    cocinadorStatusSpan.classList.add('text-gray-600');
                 }
             };
 
@@ -120,7 +166,9 @@
             // Escuchar los eventos de entrada de datos para actualizar en tiempo real
             buPorOrdenInput.addEventListener('input', calcular);
             buRealizadosInput.addEventListener('input', calcular);
+            cocinadorInput.addEventListener('input', calcular); // Añadimos el cocinador a los eventos de entrada
         });
     </script>
 </body>
 </html>
+
