@@ -39,10 +39,11 @@
                 <input type="number" id="suma_tanque" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 70">
             </div>
 
-            <!-- Campo: Cocinador -->
+            <!-- Campo: Cocinador con validación -->
             <div>
                 <label for="cocinador" class="block text-sm font-medium text-gray-700">Cocinador</label>
-                <input type="number" id="cocinador" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 0">
+                <input type="number" id="cocinador" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 0" min="0" max="1">
+                <p id="cocinador_error" class="text-red-500 text-xs mt-1 hidden">El valor debe ser 0 o 1.</p>
             </div>
         </div>
 
@@ -69,11 +70,6 @@
                     <span class="font-medium">Preparaciones faltantes:</span>
                     <span id="preparaciones_faltantes" class="text-lg font-bold text-blue-600">0.00</span>
                 </div>
-                <!-- Nuevo elemento para mostrar el estado del cocinador -->
-                <div class="flex justify-between items-center">
-                    <span class="font-medium">Estado del cocinador:</span>
-                    <span id="cocinador_status" class="text-lg font-bold text-gray-600">No usado</span>
-                </div>
             </div>
         </div>
     </div>
@@ -81,13 +77,13 @@
     <!-- Pie de página con derechos de autor y redes sociales -->
     <footer class="mt-8 text-center text-gray-500 text-sm">
         <p class="mb-2">
-            &copy; 2025 Todos los derechos reservados a Lihue Casella
+            &copy; 2024 Todos los derechos reservados.
         </p>
         <div class="flex justify-center space-x-4">
             <a href="https://www.instagram.com/itz.lihu/" target="_blank" class="hover:text-blue-600 transition-colors">Instagram</a>
             <a href="https://github.com/LihueCasella" target="_blank" class="hover:text-blue-600 transition-colors">GitHub</a>
             <a href="https://wa.me/+5492657319151" target="_blank" class="hover:text-blue-600 transition-colors">WhatsApp</a>
-            <a href="https://www.linkedin.com/in/lihuecasella/" target="_blank" class="hover:text-blue-600 transition-colors">LinkedIn</a>
+            <a href="https://www.linkedin.com/in/lihuecasella" target="_blank" class="hover:text-blue-600 transition-colors">LinkedIn</a>
         </div>
     </footer>
 
@@ -107,13 +103,25 @@
             const rellenoFaltanteSpan = document.getElementById('relleno_faltante');
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
             const preparacionesFaltantesSpan = document.getElementById('preparaciones_faltantes');
-            const cocinadorStatusSpan = document.getElementById('cocinador_status');
-
+            const cocinadorErrorP = document.getElementById('cocinador_error');
+            
             // Función para realizar el cálculo
             const calcular = () => {
                 const buPorOrden = parseFloat(buPorOrdenInput.value) || 0;
                 const buRealizados = parseFloat(buRealizadosInput.value) || 0;
-                const cocinador = parseFloat(cocinadorInput.value) || 0;
+                const cocinador = parseFloat(cocinadorInput.value);
+                
+                // --- Nueva validación para el campo Cocinador ---
+                if (cocinador !== 0 && cocinador !== 1) {
+                    // Si el valor no es 0 ni 1, mostramos un error y detenemos el cálculo
+                    cocinadorErrorP.classList.remove('hidden');
+                    rellenoFaltanteSpan.textContent = '0.00 Kg';
+                    horasFaltantesSpan.textContent = '0.00';
+                    preparacionesFaltantesSpan.textContent = '0.00';
+                    return; // Salimos de la función
+                } else {
+                    cocinadorErrorP.classList.add('hidden'); // Ocultamos el error si el valor es válido
+                }
                 
                 const buFaltantes = buPorOrden - buRealizados;
                 
@@ -130,33 +138,22 @@
                     if (horasPorPreparacion > 0) {
                         let preparaciones = horas / horasPorPreparacion;
                         
-                        // --- Lógica condicional actualizada para el cocinador ---
+                        // Lógica condicional para el cocinador
                         if (cocinador === 1) {
                             preparaciones -= 1; // Si es 1, resta 1 a las preparaciones
-                            cocinadorStatusSpan.textContent = 'Usado (resta 1)';
-                            cocinadorStatusSpan.classList.remove('text-gray-600');
-                            cocinadorStatusSpan.classList.add('text-red-600');
                         } else if (cocinador === 0) {
                             preparaciones += 1; // Si es 0, suma 1 a las preparaciones
-                            cocinadorStatusSpan.textContent = 'No usado (suma 1)';
-                            cocinadorStatusSpan.classList.remove('text-red-600');
-                            cocinadorStatusSpan.classList.add('text-green-600');
-                        } else {
-                             // Si el valor no es 0 ni 1
-                            cocinadorStatusSpan.textContent = 'Valor de cocinador inválido (debe ser 0 o 1)';
-                            cocinadorStatusSpan.classList.remove('text-green-600', 'text-red-600');
-                            cocinadorStatusSpan.classList.add('text-gray-600');
                         }
                         
+                        // Aseguramos que el resultado no sea negativo
+                        preparaciones = Math.max(0, preparaciones);
+
                         preparacionesFaltantesSpan.textContent = preparaciones.toFixed(2);
                     }
                 } else {
                     rellenoFaltanteSpan.textContent = '0.00 Kg';
                     horasFaltantesSpan.textContent = '0.00';
                     preparacionesFaltantesSpan.textContent = '0.00';
-                    cocinadorStatusSpan.textContent = 'No usado';
-                    cocinadorStatusSpan.classList.remove('text-red-600', 'text-green-600');
-                    cocinadorStatusSpan.classList.add('text-gray-600');
                 }
             };
 
@@ -171,4 +168,5 @@
     </script>
 </body>
 </html>
+
 
