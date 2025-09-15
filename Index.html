@@ -74,6 +74,12 @@
                     <span class="font-medium">Preparaciones faltantes:</span>
                     <span id="preparaciones_faltantes" class="text-lg font-bold text-blue-600">0.00</span>
                 </div>
+                <!-- Nuevo elemento para el mensaje de corte de horas -->
+                <div class="text-center mt-4">
+                    <p id="mensaje_corte_horas" class="text-sm font-semibold text-green-600 hidden">
+                        ¡Se necesita solo 1 preparación para las horas restantes!
+                    </p>
+                </div>
             </div>
         </div>
     </div>
@@ -81,7 +87,7 @@
     <!-- Pie de página con derechos de autor y redes sociales -->
     <footer class="mt-8 text-center text-gray-500 text-sm">
         <p class="mb-2">
-            &copy; 2025 Todos los derechos reservados a Lihue Casella.
+            &copy; 2024 Todos los derechos reservados.
         </p>
         <div class="flex justify-center space-x-4">
             <a href="https://www.instagram.com/itz.lihu/" target="_blank" class="hover:text-blue-600 transition-colors">Instagram</a>
@@ -98,6 +104,9 @@
             const rellenoKgPorHrBase = 263.34;
             const buPorHr = 1672;
             const horasPorPreparacion = 2.445; // Valor inferido: 6.89 / 2.81
+            
+            // Nuevo: Límite de horas para el "corte" de preparaciones
+            const limiteDeHoras = 5;
 
             // Referencias a los elementos del DOM (inputs y displays)
             const buPorOrdenInput = document.getElementById('bu_por_orden');
@@ -108,6 +117,7 @@
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
             const preparacionesFaltantesSpan = document.getElementById('preparaciones_faltantes');
             const cocinadorErrorP = document.getElementById('cocinador_error');
+            const mensajeCorteHorasP = document.getElementById('mensaje_corte_horas');
             
             // Función para realizar el cálculo
             const calcular = () => {
@@ -117,19 +127,17 @@
                 
                 // --- Validación para el campo Cocinador ---
                 if (cocinador !== 0 && cocinador !== 1) {
-                    // Si el valor no es 0 ni 1, mostramos un error y detenemos el cálculo
                     cocinadorErrorP.classList.remove('hidden');
                     rellenoFaltanteSpan.textContent = '0.00 Kg';
                     horasFaltantesSpan.textContent = '0.00';
                     preparacionesFaltantesSpan.textContent = '0.00';
-                    return; // Salimos de la función
+                    mensajeCorteHorasP.classList.add('hidden');
+                    return; 
                 } else {
-                    cocinadorErrorP.classList.add('hidden'); // Ocultamos el error si el valor es válido
+                    cocinadorErrorP.classList.add('hidden');
                 }
                 
                 const buFaltantes = buPorOrden - buRealizados;
-                
-                // Usamos la tasa de relleno base, ya que el condicional afecta a las preparaciones
                 const rellenoKgPorHrActual = rellenoKgPorHrBase;
 
                 if (buFaltantes > 0 && buPorHr > 0 && rellenoKgPorHrActual > 0) {
@@ -139,24 +147,30 @@
                     const horas = relleno / rellenoKgPorHrActual;
                     horasFaltantesSpan.textContent = horas.toFixed(2);
 
+                    let preparaciones = 0;
                     if (horasPorPreparacion > 0) {
-                        let preparaciones = horas / horasPorPreparacion;
+                        // Nuevo: Lógica de corte para las preparaciones
+                        if (horas <= limiteDeHoras) {
+                            preparaciones = 1;
+                            mensajeCorteHorasP.classList.remove('hidden');
+                        } else {
+                            preparaciones = horas / horasPorPreparacion;
+                            mensajeCorteHorasP.classList.add('hidden');
+                        }
                         
-                        // Lógica condicional para el cocinador
-                        // Aquí se aplica la lógica correcta: solo resta 1 cuando el valor del cocinador es 1
+                        // Lógica para restar 1 si el cocinador es 1
                         if (cocinador === 1) {
                             preparaciones -= 1;
                         }
                         
-                        // Aseguramos que el resultado no sea negativo
                         preparaciones = Math.max(0, preparaciones);
-
                         preparacionesFaltantesSpan.textContent = preparaciones.toFixed(2);
                     }
                 } else {
                     rellenoFaltanteSpan.textContent = '0.00 Kg';
                     horasFaltantesSpan.textContent = '0.00';
                     preparacionesFaltantesSpan.textContent = '0.00';
+                    mensajeCorteHorasP.classList.add('hidden');
                 }
             };
 
@@ -166,10 +180,9 @@
             // Escuchar los eventos de entrada de datos para actualizar en tiempo real
             buPorOrdenInput.addEventListener('input', calcular);
             buRealizadosInput.addEventListener('input', calcular);
-            cocinadorInput.addEventListener('input', calcular); // Añadimos el cocinador a los eventos de entrada
+            cocinadorInput.addEventListener('input', calcular);
         });
     </script>
 </body>
 </html>
-
 
