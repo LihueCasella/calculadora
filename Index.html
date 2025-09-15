@@ -49,6 +49,12 @@
                 <input type="number" id="cocinador" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 0" min="0" max="1">
                 <p id="cocinador_error" class="text-red-500 text-xs mt-1 hidden">El valor debe ser 0 o 1.</p>
             </div>
+            
+            <!-- Campo: Límite de horas de corte (¡Nuevo!) -->
+            <div>
+                <label for="limite_de_horas" class="block text-sm font-medium text-gray-700">Límite de horas de corte</label>
+                <input type="number" id="limite_de_horas" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 5" value="5">
+            </div>
         </div>
 
         <!-- Botón de cálculo -->
@@ -105,13 +111,11 @@
             const buPorHr = 1672;
             const horasPorPreparacion = 2.445; // Valor inferido: 6.89 / 2.81
             
-            // Nuevo: Límite de horas para el "corte" de preparaciones
-            const limiteDeHoras = 5;
-
             // Referencias a los elementos del DOM (inputs y displays)
             const buPorOrdenInput = document.getElementById('bu_por_orden');
             const buRealizadosInput = document.getElementById('bu_realizados');
             const cocinadorInput = document.getElementById('cocinador');
+            const limiteDeHorasInput = document.getElementById('limite_de_horas');
             const calcularBtn = document.getElementById('btn_calcular');
             const rellenoFaltanteSpan = document.getElementById('relleno_faltante');
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
@@ -124,6 +128,7 @@
                 const buPorOrden = parseFloat(buPorOrdenInput.value) || 0;
                 const buRealizados = parseFloat(buRealizadosInput.value) || 0;
                 const cocinador = parseFloat(cocinadorInput.value);
+                const limiteDeHoras = parseFloat(limiteDeHorasInput.value) || 0;
                 
                 // --- Validación para el campo Cocinador ---
                 if (cocinador !== 0 && cocinador !== 1) {
@@ -181,6 +186,7 @@
             buPorOrdenInput.addEventListener('input', calcular);
             buRealizadosInput.addEventListener('input', calcular);
             cocinadorInput.addEventListener('input', calcular);
+            limiteDeHorasInput.addEventListener('input', calcular);
         });
     </script>
 </body>
