@@ -49,12 +49,6 @@
                 <input type="number" id="cocinador" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 0" min="0" max="1">
                 <p id="cocinador_error" class="text-red-500 text-xs mt-1 hidden">El valor debe ser 0 o 1.</p>
             </div>
-            
-            <!-- Campos para el cálculo de horas de corte (¡Nuevo!) -->
-            <div>
-                <label for="hora_actual" class="block text-sm font-medium text-gray-700">Hora actual</label>
-                <input type="time" id="hora_actual" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 bg-gray-200 cursor-not-allowed" readonly>
-            </div>
         </div>
 
         <!-- Botón de cálculo -->
@@ -79,6 +73,10 @@
                 <div class="flex justify-between items-center">
                     <span class="font-medium">Preparaciones faltantes:</span>
                     <span id="preparaciones_faltantes" class="text-lg font-bold text-blue-600">0.00</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">Horario de corte:</span>
+                    <span id="horario_corte" class="text-lg font-bold text-blue-600">--:--</span>
                 </div>
                 <!-- Nuevo elemento para el mensaje de corte de horas -->
                 <div class="text-center mt-4">
@@ -115,11 +113,11 @@
             const buPorOrdenInput = document.getElementById('bu_por_orden');
             const buRealizadosInput = document.getElementById('bu_realizados');
             const cocinadorInput = document.getElementById('cocinador');
-            const horaActualInput = document.getElementById('hora_actual');
             const calcularBtn = document.getElementById('btn_calcular');
             const rellenoFaltanteSpan = document.getElementById('relleno_faltante');
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
             const preparacionesFaltantesSpan = document.getElementById('preparaciones_faltantes');
+            const horarioCorteSpan = document.getElementById('horario_corte');
             const cocinadorErrorP = document.getElementById('cocinador_error');
             const mensajeCorteHorasP = document.getElementById('mensaje_corte_horas');
             
@@ -129,17 +127,13 @@
                 const buRealizados = parseFloat(buRealizadosInput.value) || 0;
                 const cocinador = parseFloat(cocinadorInput.value);
                 
-                // Obtenemos la hora actual del campo de tiempo
-                const horaActual = horaActualInput.value;
-                const [horasActuales, minutosActuales] = horaActual.split(':').map(Number);
-                const limiteDeHoras = (horasActuales * 60 + minutosActuales) / 60; // Convertimos a horas decimales
-                
                 // --- Validación para el campo Cocinador ---
                 if (cocinador !== 0 && cocinador !== 1) {
                     cocinadorErrorP.classList.remove('hidden');
                     rellenoFaltanteSpan.textContent = '0.00 Kg';
                     horasFaltantesSpan.textContent = '0.00';
                     preparacionesFaltantesSpan.textContent = '0.00';
+                    horarioCorteSpan.textContent = '--:--';
                     mensajeCorteHorasP.classList.add('hidden');
                     return; 
                 } else {
@@ -158,8 +152,8 @@
 
                     let preparaciones = 0;
                     if (horasPorPreparacion > 0) {
-                        // Lógica de corte para las preparaciones usando la hora actual
-                        if (horas <= limiteDeHoras) {
+                        // Lógica de corte para las preparaciones
+                        if (horas <= 2.81) { // 6.89/2.81 = 2.45
                             preparaciones = 1;
                             mensajeCorteHorasP.classList.remove('hidden');
                         } else {
@@ -175,23 +169,27 @@
                         preparaciones = Math.max(0, preparaciones);
                         preparacionesFaltantesSpan.textContent = preparaciones.toFixed(2);
                     }
+
+                    // --- Cálculo del horario de corte ---
+                    const horasFaltantes = parseFloat(horasFaltantesSpan.textContent);
+                    const horasRestantesAjustadas = horasFaltantes - (17 / 60);
+                    const horaActual = new Date();
+                    const horasTotales = horaActual.getHours() + (horasActuales.getMinutes() / 60) + horasRestantesAjustadas;
+
+                    const horasCorte = Math.floor(horasTotales);
+                    const minutosCorte = Math.round((horasTotales - horasCorte) * 60);
+
+                    const horaFormateada = String(horasCorte).padStart(2, '0');
+                    const minutosFormateados = String(minutosCorte).padStart(2, '0');
+                    horarioCorteSpan.textContent = `${horaFormateada}:${minutosFormateados}`;
+
                 } else {
                     rellenoFaltanteSpan.textContent = '0.00 Kg';
                     horasFaltantesSpan.textContent = '0.00';
                     preparacionesFaltantesSpan.textContent = '0.00';
+                    horarioCorteSpan.textContent = '--:--';
                     mensajeCorteHorasP.classList.add('hidden');
                 }
-            };
-
-            // Función para actualizar el campo de la hora actual cada minuto
-            const actualizarHoraActual = () => {
-                const ahora = new Date();
-                const horas = String(ahora.getHours()).padStart(2, '0');
-                const minutos = String(ahora.getMinutes()).padStart(2, '0');
-                horaActualInput.value = `${horas}:${minutos}`;
-                
-                // Volvemos a calcular para reflejar el cambio de hora
-                calcular();
             };
             
             // Escuchar los eventos de entrada de datos
@@ -202,14 +200,10 @@
             // Escuchar el evento de clic en el botón
             calcularBtn.addEventListener('click', calcular);
             
-            // Actualizamos el campo de hora actual cada minuto
-            setInterval(actualizarHoraActual, 60000);
-            
             // Inicializar al cargar la página
-            actualizarHoraActual();
+            calcular();
             
         });
     </script>
 </body>
 </html>
-
