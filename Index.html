@@ -10,14 +10,54 @@
         /* Importamos la fuente Inter desde Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
         
-        /* Estilo personalizado para usar la fuente Inter y asegurar un fondo agradable */
+        /* Estilo personalizado para el cuerpo de la página */
         body {
             font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden; /* Evita el scroll horizontal */
+        }
+
+        /* Contenedor principal de la calculadora */
+        .calculator-container {
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Estilo para los logos de fondo */
+        .logo-bottom-left {
+            position: fixed;
+            bottom: -50px;
+            left: -50px;
+            width: 250px;
+            opacity: 0.1;
+            transform: rotate(-30deg);
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
+        }
+        
+        .logo-bottom-right {
+            position: fixed;
+            bottom: -50px;
+            right: -50px;
+            width: 250px;
+            opacity: 0.1;
+            transform: rotate(30deg);
+            z-index: 0;
+            user-select: none;
+            pointer-events: none;
         }
     </style>
 </head>
 <body class="bg-gray-100 flex flex-col items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm">
+
+    <!-- Logos de fondo -->
+    <img src="https://i.imgur.com/G3j9wQO.png" alt="Logo Izquierda" class="logo-bottom-left">
+    <img src="https://i.imgur.com/83p56P5.png" alt="Logo Derecha" class="logo-bottom-right">
+
+    <div class="calculator-container bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm">
         <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
             Calculadora de Relleno
         </h1>
@@ -25,7 +65,7 @@
         <!-- Sección de hora actual -->
         <div class="mb-6 text-center">
             <h2 class="text-lg font-semibold text-gray-700">Hora actual</h2>
-            <p id="hora_actual_display" class="text-xl font-bold text-blue-600">--:--</p>
+            <p id="hora_actual_display" class="text-xl font-bold text-[#1B65A6]">--:--</p>
         </div>
 
         <!-- Sección de campos de entrada -->
@@ -56,32 +96,35 @@
             </div>
         </div>
 
-        <!-- Botón de cálculo -->
-        <div class="flex justify-center">
-            <button id="btn_calcular" class="bg-blue-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
+        <!-- Botones de cálculo y limpieza -->
+        <div class="flex justify-center space-x-4">
+            <button id="btn_calcular" class="bg-[#1B65A6] text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition-all duration-200">
                 Calcular
+            </button>
+            <button id="btn_limpiar" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-all duration-200">
+                Limpiar
             </button>
         </div>
 
         <!-- Sección de resultados -->
-        <div class="mt-8 bg-blue-50 p-6 rounded-xl shadow-inner border border-blue-100">
+        <div class="mt-8 bg-[#1F82BF] bg-opacity-10 p-6 rounded-xl shadow-inner border border-blue-100">
             <h2 class="text-xl font-semibold text-gray-800 mb-4">Resultados</h2>
             <div class="space-y-3 text-gray-700">
                 <div class="flex justify-between items-center">
                     <span class="font-medium">Relleno faltante:</span>
-                    <span id="relleno_faltante" class="text-lg font-bold text-blue-600">0.00 Kg</span>
+                    <span id="relleno_faltante" class="text-lg font-bold text-[#1B65A6]">0.00 Kg</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="font-medium">Horas faltantes:</span>
-                    <span id="horas_faltantes" class="text-lg font-bold text-blue-600">0.00</span>
+                    <span id="horas_faltantes" class="text-lg font-bold text-[#1B65A6]">0.00</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="font-medium">Preparaciones faltantes:</span>
-                    <span id="preparaciones_faltantes" class="text-lg font-bold text-blue-600">0.00</span>
+                    <span id="preparaciones_faltantes" class="text-lg font-bold text-[#1B65A6]">0.00</span>
                 </div>
                 <div class="flex justify-between items-center">
                     <span class="font-medium">Horario de corte en CC:</span>
-                    <span id="horario_corte" class="text-lg font-bold text-blue-600">--:--</span>
+                    <span id="horario_corte" class="text-lg font-bold text-[#1B65A6]">--:--</span>
                 </div>
                 <!-- Nuevo elemento para el mensaje de corte de horas -->
                 <div class="text-center mt-4">
@@ -99,10 +142,10 @@
             &copy; 2024 Todos los derechos reservados.
         </p>
         <div class="flex justify-center space-x-4">
-            <a href="https://www.instagram.com/itz.lihu/" target="_blank" class="hover:text-blue-600 transition-colors">Instagram</a>
-            <a href="https://github.com/LihueCasella" target="_blank" class="hover:text-blue-600 transition-colors">GitHub</a>
-            <a href="https://wa.me/+5492657319151" target="_blank" class="hover:text-blue-600 transition-colors">WhatsApp</a>
-            <a href="https://www.linkedin.com/in/lihuecasella/" target="_blank" class="hover:text-blue-600 transition-colors">LinkedIn</a>
+            <a href="https://www.instagram.com/itz.lihu/" target="_blank" class="hover:text-[#F2A922] transition-colors">Instagram</a>
+            <a href="https://github.com/LihueCasella" target="_blank" class="hover:text-[#F2A922] transition-colors">GitHub</a>
+            <a href="https://wa.me/+5492657319151" target="_blank" class="hover:text-[#F2A922] transition-colors">WhatsApp</a>
+            <a href="https://www.linkedin.com/in/lihuecasella/" target="_blank" class="hover:text-[#F2A922] transition-colors">LinkedIn</a>
         </div>
     </footer>
 
@@ -117,8 +160,10 @@
             // Referencias a los elementos del DOM (inputs y displays)
             const buPorOrdenInput = document.getElementById('bu_por_orden');
             const buRealizadosInput = document.getElementById('bu_realizados');
+            const sumaTanqueInput = document.getElementById('suma_tanque');
             const cocinadorInput = document.getElementById('cocinador');
             const calcularBtn = document.getElementById('btn_calcular');
+            const limpiarBtn = document.getElementById('btn_limpiar');
             const rellenoFaltanteSpan = document.getElementById('relleno_faltante');
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
             const preparacionesFaltantesSpan = document.getElementById('preparaciones_faltantes');
@@ -139,10 +184,21 @@
                 horaActualDisplay.textContent = `${horas}:${minutosFormateados} ${ampm}`;
             };
             
-            // Actualizar la hora al cargar y cada minuto
-            mostrarHoraActual();
-            setInterval(mostrarHoraActual, 60000); // Actualiza cada 60 segundos
-            
+            // Función para limpiar todos los campos y resultados
+            const limpiarCampos = () => {
+                buPorOrdenInput.value = '';
+                buRealizadosInput.value = '';
+                sumaTanqueInput.value = '';
+                cocinadorInput.value = '';
+                rellenoFaltanteSpan.textContent = '0.00 Kg';
+                horasFaltantesSpan.textContent = '0.00';
+                preparacionesFaltantesSpan.textContent = '0.00';
+                horarioCorteSpan.textContent = '--:--';
+                cocinadorErrorP.classList.add('hidden');
+                mensajeCorteHorasP.classList.add('hidden');
+                buPorOrdenInput.focus(); // Opcional: enfocar el primer campo para una mejor UX
+            };
+
             // Función para realizar el cálculo principal
             const calcular = () => {
                 const buPorOrden = parseFloat(buPorOrdenInput.value) || 0;
@@ -196,7 +252,6 @@
                     const horasFaltantes = parseFloat(horasFaltantesSpan.textContent);
                     const now = new Date();
 
-                    // Aplicamos la fórmula: ((horas faltantes - (17/60))) * 60
                     // Convertimos las horas de la fórmula a minutos para sumarlas a la hora actual
                     const minutosParaSumar = (horasFaltantes - (17 / 60)) * 60;
                     
@@ -223,19 +278,23 @@
                 }
             };
             
+            // --- Event Listeners ---
             // Escuchar los eventos de entrada de datos en todos los campos relevantes
             buPorOrdenInput.addEventListener('input', calcular);
             buRealizadosInput.addEventListener('input', calcular);
             cocinadorInput.addEventListener('input', calcular);
             
-            // Escuchar el evento de clic en el botón
+            // Escuchar el evento de clic en los botones
             calcularBtn.addEventListener('click', calcular);
-            
-            // Inicializar al cargar la página
-            calcular();
-            
+            limpiarBtn.addEventListener('click', limpiarCampos); // Nuevo: Evento para el botón de limpiar
+
+            // Llama a las funciones al cargar la página
+            mostrarHoraActual();
+            setInterval(mostrarHoraActual, 60000); // Actualiza cada 60 segundos
+            limpiarCampos(); // Nuevo: Limpia los campos al cargar la página
         });
     </script>
 </body>
 </html>
+
 
