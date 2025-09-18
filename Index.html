@@ -15,131 +15,128 @@
             font-family: 'Inter', sans-serif;
             /* Aplicamos el degradado lineal en el fondo */
             background: linear-gradient(to bottom, #B0E0E6, #1B65A6);
-            position: relative;
             min-height: 100vh;
         }
 
-        /* Contenedor principal de la calculadora */
-        .calculator-container {
-            position: relative;
-            z-index: 10;
+        /* Contenedor principal para centrar el contenido y los logos */
+        .main-content-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 1rem;
+            width: 100%;
         }
 
-        /* Estilo para los logos de fondo */
-        .logo-bottom-left {
-            position: fixed;
-            bottom: -50px;
-            left: -50px;
-            width: 250px;
+        /* Estilo para los logos laterales */
+        .logo-side {
+            width: 200px; /* Tamaño de los logos */
             opacity: 0.15;
-            transform: rotate(-30deg);
-            z-index: 0;
             user-select: none;
             pointer-events: none;
-            /* Aplicamos un filtro para que el logo sea negro */
-            filter: grayscale(100%) brightness(0);
+            filter: grayscale(100%) brightness(0); /* Filtro para que el logo sea negro */
+            margin: 0 1rem; /* Margen para separarlos de la calculadora */
+            display: none; /* Ocultamos por defecto en pantallas pequeñas */
         }
         
-        .logo-bottom-right {
-            position: fixed;
-            bottom: -50px;
-            right: -50px;
-            width: 250px;
-            opacity: 0.15;
-            transform: rotate(30deg);
-            z-index: 0;
-            user-select: none;
-            pointer-events: none;
-            /* Aplicamos un filtro para que el logo sea negro */
-            filter: grayscale(100%) brightness(0);
+        @media (min-width: 768px) {
+            .logo-side {
+                display: block; /* Mostramos los logos en pantallas medianas y grandes */
+            }
         }
     </style>
 </head>
 <body class="flex flex-col items-center justify-center p-4">
 
-    <!-- Logos de fondo con los colores corregidos -->
-    <img src="assets/imagenes/arcor-seeklogo.png" alt="Logo Izquierda" class="logo-bottom-left">
-    <img src="assets/imagenes/bagley-seeklogo.png" alt="Logo Derecha" class="logo-bottom-right">
+    <!-- Contenedor para alinear los logos y la calculadora en el centro -->
+    <div class="main-content-container">
+        <!-- Logo izquierdo -->
+        <img src="assets/imagenes/arcor-seeklogo.png" alt="Logo Izquierdo" class="logo-side">
+        
+        <!-- Contenedor principal de la calculadora -->
+        <div class="calculator-container bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm mt-8 mb-8">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
+                Calculadora de Relleno
+            </h1>
 
-    <div class="calculator-container bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm mt-8 mb-8">
-        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">
-            Calculadora de Relleno
-        </h1>
+            <!-- Sección de hora actual -->
+            <div class="mb-6 text-center">
+                <h2 class="text-lg font-semibold text-gray-700">Hora actual</h2>
+                <p id="hora_actual_display" class="text-xl font-bold text-[#1B65A6]">--:--</p>
+            </div>
 
-        <!-- Sección de hora actual -->
-        <div class="mb-6 text-center">
-            <h2 class="text-lg font-semibold text-gray-700">Hora actual</h2>
-            <p id="hora_actual_display" class="text-xl font-bold text-[#1B65A6]">--:--</p>
+            <!-- Sección de campos de entrada -->
+            <div class="space-y-6 mb-8">
+                <!-- Campo: Cantidad de BU por orden -->
+                <div>
+                    <label for="bu_por_orden" class="block text-sm font-medium text-gray-700">Cantidad de BU por orden</label>
+                    <input type="number" id="bu_por_orden" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 50000">
+                </div>
+
+                <!-- Campo: BU realizados -->
+                <div>
+                    <label for="bu_realizados" class="block text-sm font-medium text-gray-700">BU realizados</label>
+                    <input type="number" id="bu_realizados" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 38000">
+                </div>
+
+                <!-- Campo: Suma % de tanque mezclador y premezclador -->
+                <div>
+                    <label for="suma_tanque" class="block text-sm font-medium text-gray-700">Suma % de tanque mezclador y premezclador</label>
+                    <input type="number" id="suma_tanque" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 70">
+                </div>
+
+                <!-- Campo: Cocinador con validación -->
+                <div>
+                    <label for="cocinador" class="block text-sm font-medium text-gray-700">Cocinador</label>
+                    <input type="number" id="cocinador" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 0" min="0" max="1">
+                    <p id="cocinador_error" class="text-red-500 text-xs mt-1 hidden">El valor debe ser 0 o 1.</p>
+                </div>
+            </div>
+
+            <!-- Botones de cálculo y limpieza -->
+            <div class="flex justify-center space-x-4">
+                <button id="btn_calcular" class="bg-[#1B65A6] text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-[#1B65A6] focus:ring-opacity-50 transition-all duration-200">
+                    Calcular
+                </button>
+                <button id="btn_limpiar" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-all duration-200">
+                    Limpiar
+                </button>
+            </div>
+
+            <!-- Sección de resultados -->
+            <div class="mt-8 bg-[#1F82BF] bg-opacity-10 p-6 rounded-xl shadow-inner border border-blue-100">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">Resultados</h2>
+                <div class="space-y-3 text-gray-700">
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Relleno faltante:</span>
+                        <span id="relleno_faltante" class="text-lg font-bold text-[#1B65A6]">0.00 Kg</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Horas faltantes:</span>
+                        <span id="horas_faltantes" class="text-lg font-bold text-[#1B65A6]">0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Preparaciones faltantes:</span>
+                        <span id="preparaciones_faltantes" class="text-lg font-bold text-[#1B65A6]">0.00</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="font-medium">Horario de corte en CC:</span>
+                        <span id="horario_corte" class="text-lg font-bold text-[#1B65A6]">--:--</span>
+                    </div>
+                    <!-- Nuevo elemento para el mensaje de corte de horas -->
+                    <div class="text-center mt-4">
+                        <p id="mensaje_corte_horas" class="text-sm font-semibold text-green-600 hidden">
+                            ¡Se necesita solo 1 preparación para las horas restantes!
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <!-- Sección de campos de entrada -->
-        <div class="space-y-6 mb-8">
-            <!-- Campo: Cantidad de BU por orden -->
-            <div>
-                <label for="bu_por_orden" class="block text-sm font-medium text-gray-700">Cantidad de BU por orden</label>
-                <input type="number" id="bu_por_orden" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 50000">
-            </div>
-
-            <!-- Campo: BU realizados -->
-            <div>
-                <label for="bu_realizados" class="block text-sm font-medium text-gray-700">BU realizados</label>
-                <input type="number" id="bu_realizados" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 38000">
-            </div>
-
-            <!-- Campo: Suma % de tanque mezclador y premezclador -->
-            <div>
-                <label for="suma_tanque" class="block text-sm font-medium text-gray-700">Suma % de tanque mezclador y premezclador</label>
-                <input type="number" id="suma_tanque" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 70">
-            </div>
-
-            <!-- Campo: Cocinador con validación -->
-            <div>
-                <label for="cocinador" class="block text-sm font-medium text-gray-700">Cocinador</label>
-                <input type="number" id="cocinador" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-[#1B65A6] focus:border-[#1B65A6] transition-colors" placeholder="Ej: 0" min="0" max="1">
-                <p id="cocinador_error" class="text-red-500 text-xs mt-1 hidden">El valor debe ser 0 o 1.</p>
-            </div>
-        </div>
-
-        <!-- Botones de cálculo y limpieza -->
-        <div class="flex justify-center space-x-4">
-            <button id="btn_calcular" class="bg-[#1B65A6] text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-[#1B65A6] focus:ring-opacity-50 transition-all duration-200">
-                Calcular
-            </button>
-            <button id="btn_limpiar" class="bg-gray-200 text-gray-700 font-bold py-3 px-6 rounded-xl shadow-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-opacity-50 transition-all duration-200">
-                Limpiar
-            </button>
-        </div>
-
-        <!-- Sección de resultados -->
-        <div class="mt-8 bg-[#1F82BF] bg-opacity-10 p-6 rounded-xl shadow-inner border border-blue-100">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Resultados</h2>
-            <div class="space-y-3 text-gray-700">
-                <div class="flex justify-between items-center">
-                    <span class="font-medium">Relleno faltante:</span>
-                    <span id="relleno_faltante" class="text-lg font-bold text-[#1B65A6]">0.00 Kg</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="font-medium">Horas faltantes:</span>
-                    <span id="horas_faltantes" class="text-lg font-bold text-[#1B65A6]">0.00</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="font-medium">Preparaciones faltantes:</span>
-                    <span id="preparaciones_faltantes" class="text-lg font-bold text-[#1B65A6]">0.00</span>
-                </div>
-                <div class="flex justify-between items-center">
-                    <span class="font-medium">Horario de corte en CC:</span>
-                    <span id="horario_corte" class="text-lg font-bold text-[#1B65A6]">--:--</span>
-                </div>
-                <!-- Nuevo elemento para el mensaje de corte de horas -->
-                <div class="text-center mt-4">
-                    <p id="mensaje_corte_horas" class="text-sm font-semibold text-green-600 hidden">
-                        ¡Se necesita solo 1 preparación para las horas restantes!
-                    </p>
-                </div>
-            </div>
-        </div>
+        
+        <!-- Logo derecho -->
+        <img src="assets/imagenes/bagley-seeklogo.png" alt="Logo Derecho" class="logo-side">
     </div>
-    
+
     <!-- Pie de página con derechos de autor y redes sociales -->
     <footer class="mt-8 text-center text-black text-sm">
         <p class="mb-2">
