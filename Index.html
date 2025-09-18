@@ -50,10 +50,15 @@
                 <p id="cocinador_error" class="text-red-500 text-xs mt-1 hidden">El valor debe ser 0 o 1.</p>
             </div>
             
-            <!-- Campo: Límite de horas de corte (¡Nuevo!) -->
+            <!-- Campos para el cálculo de horas de corte (¡Nuevo!) -->
             <div>
-                <label for="limite_de_horas" class="block text-sm font-medium text-gray-700">Límite de horas de corte</label>
-                <input type="number" id="limite_de_horas" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Ej: 5" value="5">
+                <label for="hora_fin_jornada" class="block text-sm font-medium text-gray-700">Hora de fin de jornada</label>
+                <input type="time" id="hora_fin_jornada" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 focus:ring-blue-500 focus:border-blue-500 transition-colors" value="17:00">
+            </div>
+
+            <div>
+                <label for="horas_restantes_para_corte" class="block text-sm font-medium text-gray-700">Horas restantes para el corte</label>
+                <input type="text" id="horas_restantes_para_corte" class="mt-1 block w-full rounded-xl border-gray-300 shadow-sm p-3 bg-gray-200 cursor-not-allowed" readonly>
             </div>
         </div>
 
@@ -115,7 +120,8 @@
             const buPorOrdenInput = document.getElementById('bu_por_orden');
             const buRealizadosInput = document.getElementById('bu_realizados');
             const cocinadorInput = document.getElementById('cocinador');
-            const limiteDeHorasInput = document.getElementById('limite_de_horas');
+            const horaFinJornadaInput = document.getElementById('hora_fin_jornada');
+            const horasRestantesParaCorteInput = document.getElementById('horas_restantes_para_corte');
             const calcularBtn = document.getElementById('btn_calcular');
             const rellenoFaltanteSpan = document.getElementById('relleno_faltante');
             const horasFaltantesSpan = document.getElementById('horas_faltantes');
@@ -123,12 +129,12 @@
             const cocinadorErrorP = document.getElementById('cocinador_error');
             const mensajeCorteHorasP = document.getElementById('mensaje_corte_horas');
             
-            // Función para realizar el cálculo
+            // Función para realizar el cálculo principal
             const calcular = () => {
                 const buPorOrden = parseFloat(buPorOrdenInput.value) || 0;
                 const buRealizados = parseFloat(buRealizadosInput.value) || 0;
                 const cocinador = parseFloat(cocinadorInput.value);
-                const limiteDeHoras = parseFloat(limiteDeHorasInput.value) || 0;
+                const limiteDeHoras = parseFloat(horasRestantesParaCorteInput.value) || 0;
                 
                 // --- Validación para el campo Cocinador ---
                 if (cocinador !== 0 && cocinador !== 1) {
@@ -154,7 +160,7 @@
 
                     let preparaciones = 0;
                     if (horasPorPreparacion > 0) {
-                        // Nuevo: Lógica de corte para las preparaciones
+                        // Lógica de corte para las preparaciones
                         if (horas <= limiteDeHoras) {
                             preparaciones = 1;
                             mensajeCorteHorasP.classList.remove('hidden');
@@ -179,15 +185,46 @@
                 }
             };
 
-            // Escuchar el evento de clic en el botón
-            calcularBtn.addEventListener('click', calcular);
+            // Función para actualizar las horas restantes para el corte
+            const actualizarHorasParaCorte = () => {
+                const horaFinJornada = horaFinJornadaInput.value;
+                if (!horaFinJornada) {
+                    horasRestantesParaCorteInput.value = '0.00';
+                    return;
+                }
 
+                const ahora = new Date();
+                const [horasFin, minutosFin] = horaFinJornada.split(':').map(Number);
+                const finJornada = new Date(ahora.getFullYear(), ahora.getMonth(), ahora.getDate(), horasFin, minutosFin, 0);
+
+                const diffMillis = finJornada.getTime() - ahora.getTime();
+                let diffHoras = diffMillis / (1000 * 60 * 60);
+
+                if (diffHoras < 0) {
+                    diffHoras = 0;
+                }
+
+                horasRestantesParaCorteInput.value = diffHoras.toFixed(2);
+                calcular();
+            };
+            
             // Escuchar los eventos de entrada de datos para actualizar en tiempo real
             buPorOrdenInput.addEventListener('input', calcular);
             buRealizadosInput.addEventListener('input', calcular);
             cocinadorInput.addEventListener('input', calcular);
-            limiteDeHorasInput.addEventListener('input', calcular);
+            horaFinJornadaInput.addEventListener('input', actualizarHorasParaCorte);
+            
+            // Escuchar el evento de clic en el botón
+            calcularBtn.addEventListener('click', calcular);
+            
+            // Actualizamos el campo de horas restantes cada minuto
+            setInterval(actualizarHorasParaCorte, 60000);
+            
+            // Inicializar al cargar la página
+            actualizarHorasParaCorte();
+            
         });
     </script>
 </body>
 </html>
+
