@@ -112,7 +112,7 @@
             // Constantes y valores de tu hoja de cálculo
             const rellenoKgPorHrBase = 263.34;
             const buPorHr = 1672;
-            const horasPorPreparacion = 2.445; // Valor inferido: 6.89 / 2.81
+            const horasPorPreparacion = 2.445;
             
             // Referencias a los elementos del DOM (inputs y displays)
             const buPorOrdenInput = document.getElementById('bu_por_orden');
@@ -192,22 +192,16 @@
                         preparacionesFaltantesSpan.textContent = preparaciones.toFixed(2);
                     }
 
-                    // --- Cálculo del horario de corte usando la nueva fórmula ---
+                    // --- Cálculo del horario de corte usando la fórmula corregida ---
                     const horasFaltantes = parseFloat(horasFaltantesSpan.textContent);
                     const now = new Date();
 
                     // Aplicamos la fórmula: ((horas faltantes - (17/60))) * 60
+                    // Convertimos las horas de la fórmula a minutos para sumarlas a la hora actual
                     const minutosParaSumar = (horasFaltantes - (17 / 60)) * 60;
                     
-                    // El usuario pide dividir el resultado por 1440. Esto parece un error de la fórmula.
-                    // Para obtener el resultado en horas/minutos y sumarlo a la hora actual, 
-                    // la división por 1440 no tendría sentido. La interpretación correcta es sumar 
-                    // los minutos calculados a la hora actual.
-                    
-                    const minutosTotales = now.getMinutes() + minutosParaSumar;
-                    
-                    // Ajustar las horas y minutos
-                    now.setMinutes(minutosTotales);
+                    // Ajustar la hora actual sumando los minutos calculados
+                    now.setMinutes(now.getMinutes() + minutosParaSumar);
 
                     let horasCorte = now.getHours();
                     let minutosCorte = now.getMinutes();
