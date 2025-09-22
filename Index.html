@@ -21,6 +21,7 @@
         /* Contenedor principal para centrar el contenido y los logos */
         .main-content-container {
             display: flex;
+            flex-direction: column; /* Apilamos los elementos verticalmente por defecto (móvil) */
             align-items: center;
             justify-content: center;
             flex-grow: 1;
@@ -28,19 +29,22 @@
             width: 100%;
         }
 
-        /* Estilo para los logos laterales */
+        /* En pantallas medianas y más grandes, los logos se muestran a los lados */
+        @media (min-width: 768px) {
+            .main-content-container {
+                flex-direction: row; /* En pantallas de escritorio, los colocamos en fila */
+            }
+            .logo-side {
+                margin: 0 4rem; /* Margen aumentado para mayor separación */
+            }
+        }
+        
+        /* Estilo para los logos */
         .logo-side {
             width: 200px; /* Tamaño de los logos */
             user-select: none;
             pointer-events: none;
-            margin: 0 4rem; /* Margen aumentado para mayor separación */
-            display: none; /* Ocultamos por defecto en pantallas pequeñas */
-        }
-        
-        @media (min-width: 768px) {
-            .logo-side {
-                display: block; /* Mostramos los logos en pantallas medianas y grandes */
-            }
+            margin-bottom: 2rem; /* Separación entre logos y la calculadora en móvil */
         }
     </style>
 </head>
@@ -48,8 +52,8 @@
 
     <!-- Contenedor para alinear los logos y la calculadora en el centro -->
     <div class="main-content-container">
-        <!-- Logo izquierdo -->
-        <img src="assets/imagenes/arcor-seeklogo.png" alt="Logo Izquierdo" class="logo-side">
+        <!-- Logo izquierdo (ahora visible en todas las pantallas) -->
+        <img src="https://placehold.co/200x200/B0E0E6/1B65A6?text=Arcor" alt="Logo Izquierdo" class="logo-side">
         
         <!-- Contenedor principal de la calculadora -->
         <div class="calculator-container bg-white p-8 rounded-3xl shadow-xl w-full max-w-sm mt-8 mb-8">
@@ -131,8 +135,8 @@
             </div>
         </div>
         
-        <!-- Logo derecho -->
-        <img src="assets/imagenes/bagley-seeklogo.png" alt="Logo Derecho" class="logo-side">
+        <!-- Logo derecho (ahora visible en todas las pantallas) -->
+        <img src="https://placehold.co/200x200/B0E0E6/1B65A6?text=Bagley" alt="Logo Derecho" class="logo-side">
     </div>
 
     <!-- Pie de página con derechos de autor y redes sociales -->
@@ -295,4 +299,3 @@
     </script>
 </body>
 </html>
-
