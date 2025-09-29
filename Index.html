@@ -6,6 +6,8 @@
     <title>Calculadora de Relleno</title>
     <!-- Incluimos Tailwind CSS para un estilo moderno y responsivo -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Agregar referencia al manifest.json -->
+    <link rel="manifest" href="manifest.json">
     <style>
         /* Importamos la fuente Inter desde Google Fonts */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
@@ -155,6 +157,16 @@
     <script>
         // Lógica de JavaScript para la calculadora
         document.addEventListener('DOMContentLoaded', () => {
+            // Registrar el Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('Service Worker registrado con éxito:', registration);
+                    })
+                    .catch(error => {
+                        console.log('Error al registrar el Service Worker:', error);
+                    });
+            }
             // Constantes y valores de tu hoja de cálculo
             const rellenoKgPorHrBase = 263.34;
             const buPorHr = 1672;
